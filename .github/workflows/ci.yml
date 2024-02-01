@@ -8,7 +8,7 @@ env:
 on:
   pull_request:
   push:
-    branches: ['main']
+    branches: ['avro-enum']
   release:
     types:
       - published

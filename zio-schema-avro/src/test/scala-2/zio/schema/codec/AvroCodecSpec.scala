@@ -289,7 +289,12 @@ object AvroCodecSpec extends ZIOSpecDefault {
       val codec = AvroCodec.schemaBasedBinaryCodec[Chunk[Option[Int]]]
       val bytes = codec.encode(Chunk(Some(42), Some(53), None, Some(64)))
       assertTrue(bytes.length == 10)
-    }
+    },
+    test("Encode Option[Option[Int]]") {
+      val codec = AvroCodec.schemaBasedBinaryCodec[Option[Option[Int]]]
+      val bytes = codec.encode(Some(Some(42)))
+      assertTrue(bytes.length == 2)
+    },
   )
 
   private val eitherEncoderSpec = suite("Avro Codec - Encoder Either spec")(
@@ -590,6 +595,12 @@ object AvroCodecSpec extends ZIOSpecDefault {
     test("Decode Option") {
       val codec  = AvroCodec.schemaBasedBinaryCodec[Option[Int]]
       val bytes  = codec.encode(Some(42))
+      val result = codec.decode(bytes)
+      assertTrue(result == Right(Some(42)))
+    },
+    test("Decode Option[Option[_]]") {
+      val codec  = AvroCodec.schemaBasedBinaryCodec[Option[Option[Int]]]
+      val bytes  = codec.encode(Some(Some(42)))
       val result = codec.decode(bytes)
       assertTrue(result == Right(Some(42)))
     }

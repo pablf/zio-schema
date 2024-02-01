@@ -957,7 +957,19 @@ object AvroCodec {
   }
 
   private def encodeOption[A](schema: Schema[A], v: Option[A]): Any =
-    v.map(encodeValue(_, schema)).orNull
+    v.map { value =>
+      val a = encodeValue(value, schema)
+
+      // if `schema` is converted to an Avro Union, then it is wrapped.
+      if (isUnion(schema)) {
+        val s = AvroSchemaCodec
+          .encodeToApacheAvro(Schema.Optional(schema, Chunk.empty))
+          .getOrElse(throw new Exception("Avro schema could not be generated for Optional."))
+        val record = new GenericRecordBuilder(s)
+        record.set("value", a)
+        record
+      } else a
+    }.orNull
 
   private def encodeEither[A, B](left: Schema[A], right: Schema[B], either: scala.util.Either[A, B]): Any = {
     val schema = AvroSchemaCodec
@@ -1047,5 +1059,14 @@ object AvroCodec {
       throw new Exception("Could not find matching case for enum value.")
     }
   }
+
+  /**
+   * Returns `true` if the corresponding AvroSchema is an union.
+   */
+  private def isUnion[A](schema: Schema[A]): Boolean =
+    schema match {
+      case _: Schema.Optional[_] => true
+      case _ => false
+    }
 
 }
