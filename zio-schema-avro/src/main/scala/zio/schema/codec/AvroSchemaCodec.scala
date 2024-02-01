@@ -678,7 +678,7 @@ object AvroSchemaCodec extends AvroSchemaCodec {
         schema match {
           case r: Record[_] => Right(r.id.name)
           case e: Enum[_]   => Right(e.id.name)
-          case _            => Right(s"hashed_${schema.ast.toString.hashCode().toString.replaceFirst("-", "n")}")
+          case _            => Right(s"hashed_${schema.toString.hashCode().toString.replaceFirst("-", "n")}")
           // TODO: better way to generate a (maybe stable) name?
         }
     }
