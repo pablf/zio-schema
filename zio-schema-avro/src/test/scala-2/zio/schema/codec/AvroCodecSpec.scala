@@ -608,6 +608,16 @@ object AvroCodecSpec extends ZIOSpecDefault {
       val bytes  = codec.encode(Some(Some(42)))
       val result = codec.decode(bytes)
       assertTrue(result == Right(Some(Some(42))))
+    },
+    test("Decode Option[Enum]") {
+      sealed trait Enum
+      case class Case1() extends Enum
+      case class Case2() extends Enum
+
+      val codec  = AvroCodec.schemaBasedBinaryCodec[Option[Enum]]
+      val bytes  = codec.encode(Some(Case1()))
+      val result = codec.decode(bytes)
+      assertTrue(result == Right(Some(Case1())))
     }
   )
 
