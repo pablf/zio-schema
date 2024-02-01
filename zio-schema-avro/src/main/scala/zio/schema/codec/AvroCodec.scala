@@ -507,7 +507,10 @@ object AvroCodec {
 
   private def decodeOptionalValue[A](value: Any, schema: Schema[A]) =
     if (value == null) Right(None)
-    else decodeValue(value, schema).map(Some(_))
+    else if (isUnion(schema)) {
+      // if value is in a wrapper
+      decodeValue(value.asInstanceOf[GenericData.Record].get("value"), schema).map(Some(_))
+    } else decodeValue(value, schema).map(Some(_))
 
   private def encodeValue[A](a: A, schema: Schema[A]): Any = schema match {
     case Schema.Enum1(_, c1, _)                     => encodeEnum(schema, a, c1)
