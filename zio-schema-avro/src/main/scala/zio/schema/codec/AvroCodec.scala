@@ -472,7 +472,7 @@ object AvroCodec {
 
   private def decodeEitherValue[A, B](value: Any, schemaLeft: Schema[A], schemaRight: Schema[B]) = {
     val record = value.asInstanceOf[GenericRecord]
-    val v = record.get("value")
+    val v      = record.get("value")
     val result = decodeInWrapper(schemaLeft, v)
     if (result.isRight) result.map(Left(_))
     else decodeInWrapper(schemaRight, v).map(Right(_))
@@ -962,7 +962,7 @@ object AvroCodec {
 
   }
 
-  private def encodeUnionWrapper[A](schema: Schema[A], value: Any): Any = 
+  private def encodeUnionWrapper[A](schema: Schema[A], value: Any): Any =
     if (isUnion(schema)) {
       val s = AvroSchemaCodec
         .encodeToApacheAvro(schema)
@@ -971,13 +971,11 @@ object AvroCodec {
         .getName(schema)
         .getOrElse(throw new Exception("Avro schema could not be generated for Optional."))
       val record = new GenericRecordBuilder(
-            AvroSchemaCodec.wrapAvro(s, name, AvroPropMarker.UnionWrapper)
-          )
+        AvroSchemaCodec.wrapAvro(s, name, AvroPropMarker.UnionWrapper)
+      )
       record.set("value", value)
       record.build()
     } else value
-    
-  
 
   private def encodeOption[A](schema: Schema[A], v: Option[A]): Any =
     v.map { value =>
@@ -1070,7 +1068,7 @@ object AvroCodec {
 
         // must check if it's wrapped
         val caseSchema = subtypeCase.schema.asInstanceOf[Schema[Any]]
-        val v = encodeValue(subtypeCase.deconstruct(value), caseSchema)
+        val v          = encodeValue(subtypeCase.deconstruct(value), caseSchema)
         encodeUnionWrapper(caseSchema, v)
 
       }
@@ -1093,7 +1091,7 @@ object AvroCodec {
             true
           case (Schema.Primitive(standardType, _)) if standardType == StandardType.StringType => true
           case (Schema.CaseClass0(_, _, _)) if avroEnumAnnotationExists                       => true
-          case _                                                                       => false
+          case _                                                                              => false
         }
         !isAvroEnumEquivalent
       }

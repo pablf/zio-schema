@@ -611,13 +611,18 @@ object AvroCodecSpec extends ZIOSpecDefault {
     },
     test("Decode Option[Enum]") {
       sealed trait Enum
-      case class Case1() extends Enum
-      case class Case2() extends Enum
+
+      object Enum {
+        case class Case1() extends Enum
+        case class Case2() extends Enum
+        implicit val schemaEnum: Schema[Enum] = DeriveSchema.gen[Enum]
+      }
+      
 
       val codec  = AvroCodec.schemaBasedBinaryCodec[Option[Enum]]
-      val bytes  = codec.encode(Some(Case1()))
+      val bytes  = codec.encode(Some(Enum.Case1()))
       val result = codec.decode(bytes)
-      assertTrue(result == Right(Some(Case1())))
+      assertTrue(result == Right(Some(Enum.Case1())))
     }
   )
 
