@@ -312,6 +312,11 @@ object AvroCodecSpec extends ZIOSpecDefault {
       val codec = AvroCodec.schemaBasedBinaryCodec[Either[List[String], Int]]
       val bytes = codec.encode(Left(List("John", "Adam", "Daniel")))
       assertTrue(bytes.length == 20)
+    },
+    test("Encode Either[String, Option[Int]]") {
+      val codec = AvroCodec.schemaBasedBinaryCodec[Either[String, Option[Int]]]
+      val bytes = codec.encode(Left(List("John", "Adam", "Daniel")))
+      assertTrue(bytes.length == 20)
     }
   )
 
@@ -618,6 +623,12 @@ object AvroCodecSpec extends ZIOSpecDefault {
       val bytes  = codec.encode(Left(List("John", "Adam", "Daniel")))
       val result = codec.decode(bytes)
       assertTrue(result == Right(Left(List("John", "Adam", "Daniel"))))
+    },
+    test("Decode Either[String, Option[Int]]") {
+      val codec  = AvroCodec.schemaBasedBinaryCodec[Either[String, Option[Int]]]
+      val bytes  = codec.encode(Right(Some(42)))
+      val result = codec.decode(bytes)
+      assertTrue(result == Right(Right(Some(42))))
     }
   )
 

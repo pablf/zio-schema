@@ -472,9 +472,10 @@ object AvroCodec {
 
   private def decodeEitherValue[A, B](value: Any, schemaLeft: Schema[A], schemaRight: Schema[B]) = {
     val record = value.asInstanceOf[GenericRecord]
-    val result = decodeValue(record.get("value"), schemaLeft)
+    val v = record.get("value")
+    val result = decodeInWrapper(schemaLeft, v)
     if (result.isRight) result.map(Left(_))
-    else decodeValue(record.get("value"), schemaRight).map(Right(_))
+    else decodeInWrapper(schemaRight, v).map(Right(_))
   }
 
   private def decodeFallbackValue[A, B](value: Any, schema: Schema.Fallback[A, B]) = {
@@ -505,12 +506,14 @@ object AvroCodec {
     }
   }
 
+  private def decodeInWrapper[A](schema: Schema[A], value: Any) =
+    if (isUnion(schema)) {
+      decodeValue(value.asInstanceOf[GenericData.Record].get("value"), schema)
+    } else decodeValue(value, schema)
+
   private def decodeOptionalValue[A](value: Any, schema: Schema[A]) =
     if (value == null) Right(None)
-    else if (isUnion(schema)) {
-      // if value is in a wrapper
-      decodeValue(value.asInstanceOf[GenericData.Record].get("value"), schema).map(Some(_))
-    } else decodeValue(value, schema).map(Some(_))
+    else decodeInWrapper(schema, value).map(Some(_))
 
   private def encodeValue[A](a: A, schema: Schema[A]): Any = schema match {
     case Schema.Enum1(_, c1, _)                     => encodeEnum(schema, a, c1)
@@ -959,24 +962,29 @@ object AvroCodec {
 
   }
 
+  private def encodeUnionWrapper[A](schema: Schema[A], value: Any): Any = 
+    if (isUnion(schema)) {
+      val s = AvroSchemaCodec
+        .encodeToApacheAvro(schema)
+        .getOrElse(throw new Exception("Avro schema could not be generated for Optional."))
+      val name = AvroSchemaCodec
+        .getName(schema)
+        .getOrElse(throw new Exception("Avro schema could not be generated for Optional."))
+      val record = new GenericRecordBuilder(
+            AvroSchemaCodec.wrapAvro(s, name, AvroPropMarker.UnionWrapper)
+          )
+      record.set("value", value)
+      record.build()
+    } else value
+    
+  
+
   private def encodeOption[A](schema: Schema[A], v: Option[A]): Any =
     v.map { value =>
       val a = encodeValue(value, schema)
 
       // if `schema` is converted to an Avro Union, then it is wrapped.
-      if (isUnion(schema)) {
-        val s = AvroSchemaCodec
-          .encodeToApacheAvro(schema)
-          .getOrElse(throw new Exception("Avro schema could not be generated for Optional."))
-        val name = AvroSchemaCodec
-          .getName(schema)
-          .getOrElse(throw new Exception("Avro schema could not be generated for Optional."))
-        val record = new GenericRecordBuilder(
-          AvroSchemaCodec.wrapAvro(s, name, AvroPropMarker.UnionWrapper)
-        )
-        record.set("value", a)
-        record.build()
-      } else a
+      encodeUnionWrapper(schema, a)
     }.orNull
 
   private def encodeEither[A, B](left: Schema[A], right: Schema[B], either: scala.util.Either[A, B]): Any = {
@@ -986,8 +994,8 @@ object AvroCodec {
 
     val record = new GenericRecordBuilder(schema)
     val result = either match {
-      case Left(a)  => record.set("value", encodeValue(a, left))
-      case Right(b) => record.set("value", encodeValue(b, right))
+      case Left(a)  => record.set("value", encodeUnionWrapper(left, encodeValue(a, left)))
+      case Right(b) => record.set("value", encodeUnionWrapper(right, encodeValue(b, right)))
     }
 
     result.build()
@@ -1060,7 +1068,10 @@ object AvroCodec {
         GenericData.get.createEnum(schema.getEnumSymbols.get(fieldIndex), schema)
       } else {
 
-        encodeValue(subtypeCase.deconstruct(value), subtypeCase.schema.asInstanceOf[Schema[Any]])
+        // must check if it's wrapped
+        val caseSchema = subtypeCase.schema.asInstanceOf[Schema[Any]]
+        val v = encodeValue(subtypeCase.deconstruct(value), caseSchema)
+        encodeUnionWrapper(caseSchema, v)
 
       }
     } else {
@@ -1074,7 +1085,19 @@ object AvroCodec {
   private def isUnion[A](schema: Schema[A]): Boolean =
     schema match {
       case _: Schema.Optional[_] => true
-      case _                     => false
+      case enu: Schema.Enum[_] => {
+        val avroEnumAnnotationExists = AvroSchemaCodec.hasAvroEnumAnnotation(enu.annotations)
+        val isAvroEnumEquivalent = enu.cases.map(_.schema).forall {
+          case (Schema.Transform(Schema.Primitive(standardType, _), _, _, _, _))
+              if standardType == StandardType.UnitType && avroEnumAnnotationExists =>
+            true
+          case (Schema.Primitive(standardType, _)) if standardType == StandardType.StringType => true
+          case (Schema.CaseClass0(_, _, _)) if avroEnumAnnotationExists                       => true
+          case _                                                                       => false
+        }
+        !isAvroEnumEquivalent
+      }
+      case _ => false
     }
 
 }
