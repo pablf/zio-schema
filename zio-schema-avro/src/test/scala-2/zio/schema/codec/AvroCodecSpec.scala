@@ -617,7 +617,6 @@ object AvroCodecSpec extends ZIOSpecDefault {
         case class Case2() extends Enum
         implicit val schemaEnum: Schema[Enum] = DeriveSchema.gen[Enum]
       }
-      
 
       val codec  = AvroCodec.schemaBasedBinaryCodec[Option[Enum]]
       val bytes  = codec.encode(Some(Enum.Case1()))
