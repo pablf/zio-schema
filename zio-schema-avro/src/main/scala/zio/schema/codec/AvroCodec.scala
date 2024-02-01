@@ -965,9 +965,7 @@ object AvroCodec {
         val s = AvroSchemaCodec
           .encodeToApacheAvro(Schema.Optional(schema, Chunk.empty))
           .getOrElse(throw new Exception("Avro schema could not be generated for Optional."))
-        val record = new GenericRecordBuilder(
-          AvroSchemaCodec.wrapAvro(s, AvroSchemaCodec.getName(schema).getOrElse("option"), AvroPropMarker.UnionWrapper)
-        )
+        val record = new GenericRecordBuilder(s)
         record.set("value", a)
         record
       } else a
