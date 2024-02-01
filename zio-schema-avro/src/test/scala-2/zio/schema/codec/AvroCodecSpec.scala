@@ -602,7 +602,7 @@ object AvroCodecSpec extends ZIOSpecDefault {
       val codec  = AvroCodec.schemaBasedBinaryCodec[Option[Option[Int]]]
       val bytes  = codec.encode(Some(Some(42)))
       val result = codec.decode(bytes)
-      assertTrue(result == Right(Some(42)))
+      assertTrue(result == Right(Some(Some(42))))
     }
   )
 
