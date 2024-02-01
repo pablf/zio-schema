@@ -315,8 +315,8 @@ object AvroCodecSpec extends ZIOSpecDefault {
     },
     test("Encode Either[String, Option[Int]]") {
       val codec = AvroCodec.schemaBasedBinaryCodec[Either[String, Option[Int]]]
-      val bytes = codec.encode(Left(List("John", "Adam", "Daniel")))
-      assertTrue(bytes.length == 20)
+      val bytes = codec.encode(Right(Some(42)))
+      assertTrue(bytes.length == 3)
     }
   )
 
