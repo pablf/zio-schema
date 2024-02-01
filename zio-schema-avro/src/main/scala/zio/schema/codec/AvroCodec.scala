@@ -972,7 +972,7 @@ object AvroCodec {
           AvroSchemaCodec.wrapAvro(s, name, AvroPropMarker.UnionWrapper)
         )
         record.set("value", a)
-        record
+        record.build()
       } else a
     }.orNull
 
