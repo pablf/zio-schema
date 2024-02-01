@@ -963,9 +963,14 @@ object AvroCodec {
       // if `schema` is converted to an Avro Union, then it is wrapped.
       if (isUnion(schema)) {
         val s = AvroSchemaCodec
-          .encodeToApacheAvro(Schema.Optional(schema, Chunk.empty))
+          .encodeToApacheAvro(schema)
           .getOrElse(throw new Exception("Avro schema could not be generated for Optional."))
-        val record = new GenericRecordBuilder(s)
+        val name = AvroSchemaCodec
+          .getName(schema)
+          .getOrElse(throw new Exception("Avro schema could not be generated for Optional."))
+        val record = new GenericRecordBuilder(
+          AvroSchemaCodec.wrapAvro(s, name, AvroPropMarker.UnionWrapper)
+        )
         record.set("value", a)
         record
       } else a
