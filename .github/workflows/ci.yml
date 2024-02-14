@@ -8,7 +8,7 @@ env:
 on:
   pull_request:
   push:
-    branches: ['main']
+    branches: ['main', 'derivation']
   release:
     types:
       - published

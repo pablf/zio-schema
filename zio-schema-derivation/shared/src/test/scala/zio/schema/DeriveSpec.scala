@@ -204,6 +204,14 @@ import zio.{ Chunk, Scope }
           )
         }
       ),
+      suite("support factory")(
+        test("factory") {
+          def factory[A](deriver: Deriver[TC]): TC[A] = Derive.derive[TC, A](deriver)
+
+          val tc = factory[Enum1](deriver)
+          assertTrue(tc.isDerived == true)
+        }
+      ),
       versionSpecificSuite
     )
 
