@@ -206,7 +206,7 @@ import zio.{ Chunk, Scope }
       ),
       suite("support factory")(
         test("factory") {
-          def factory[A](deriver: Deriver[TC]): TC[A] = Derive.derive[TC, A](deriver)
+          def factory[A](deriver: Deriver[TC])(implicit schema: Schema[A]): TC[A] = Derive.derive[TC, A](deriver)(implicit schema: Schema[A])
 
           val tc = factory[Enum1](deriver)
           assertTrue(tc.isDerived == true)
