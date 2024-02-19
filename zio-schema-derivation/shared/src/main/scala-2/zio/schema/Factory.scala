@@ -19,7 +19,7 @@ object Factory {
 
   implicit def factory[A]: Factory[A] = macro factoryImpl[A]
 
-  def factoryImpl[A: c.WeakTypeTag](
+  def factoryImpl[A](
     c: whitebox.Context
   ): c.Tree = {
     import c.universe._
