@@ -17,13 +17,11 @@ trait Factory[A] {
 
 object Factory {
 
-  implicit def factory[A]: Factory[A] = macro factoryImpl[F, A]
+  implicit def factory[A]: Factory[A] = macro factoryImpl[A]
 
   def factoryImpl[A: c.WeakTypeTag](
     c: whitebox.Context
-  )(deriver: c.Expr[Deriver[F]])(
-    schema: c.Expr[Schema[A]]
-  )(implicit ftt: c.WeakTypeTag[F[_]]): c.Tree = {
+  )(schema: c.Expr[Schema[A]]): c.Tree = {
     import c.universe._
 
     reify {
