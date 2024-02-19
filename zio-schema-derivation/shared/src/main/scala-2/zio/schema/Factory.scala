@@ -21,7 +21,7 @@ object Factory {
 
   def factoryImpl[A: c.WeakTypeTag](
     c: whitebox.Context
-  ): c.Expr[Factory[A]] = {
+  ): c.Tree = {
     import c.universe._
 
     q"""
