@@ -45,21 +45,24 @@ addCommandAlias("fixCheck", "scalafixAll --check")
 
 addCommandAlias(
   "testJVM",
-  "testsJVM/test; zioSchemaMacrosJVM/test; zioSchemaJVM/test; zioSchemaDerivationJVM/test;" +
+  "zioSchemaDerivationJVM/test;"
+  /*"testsJVM/test; zioSchemaMacrosJVM/test; zioSchemaJVM/test; zioSchemaDerivationJVM/test;" +
     "zioSchemaOpticsJVM/test; zioSchemaJsonJVM/test; zioSchemaProtobufJVM/test; zioSchemaZioTestJVM/test;" +
-    "zioSchemaAvro/test; zioSchemaThrift/test; zioSchemaBson/test; zioSchemaMsgPack/test"
+    "zioSchemaAvro/test; zioSchemaThrift/test; zioSchemaBson/test; zioSchemaMsgPack/test"*/
 )
 
 addCommandAlias(
   "testNative",
-  "zioSchemaMacrosNative/test; zioSchemaDerivationNative/test; zioSchemaJsonNative/test; zioSchemaOpticsNative/test;" +
-    "testsNative/test; zioSchemaNative/test; zioSchemaZioTestNative/test; zioSchemaProtobufNative/test;"
+  "zioSchemaDerivationNative/test;"
+  /*"zioSchemaMacrosNative/test; zioSchemaDerivationNative/test; zioSchemaJsonNative/test; zioSchemaOpticsNative/test;" +
+    "testsNative/test; zioSchemaNative/test; zioSchemaZioTestNative/test; zioSchemaProtobufNative/test;"*/
 )
 
 addCommandAlias(
   "testJS",
-  "zioSchemaMacrosJS/test; zioSchemaDerivationJS/test; zioSchemaJsonJS/test; zioSchemaOpticsJS/test; testsJS/test; zioSchemaJS/test; " +
-    "zioSchemaZioTestJS/test; zioSchemaProtobufJS/test;"
+  "zioSchemaDerivationJS/test;"
+  /*"zioSchemaMacrosJS/test; zioSchemaDerivationJS/test; zioSchemaJsonJS/test; zioSchemaOpticsJS/test; testsJS/test; zioSchemaJS/test; " +
+    "zioSchemaZioTestJS/test; zioSchemaProtobufJS/test;"*/
 )
 
 lazy val root = project

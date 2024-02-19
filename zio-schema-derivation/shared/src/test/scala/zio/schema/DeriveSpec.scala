@@ -206,11 +206,14 @@ import zio.{ Chunk, Scope }
       ),
       suite("support factory")(
         test("factory") {
-          def factory[A](deriver: Deriver[TC])(implicit schema: Schema[A]): TC[A] = Derive.derive[TC, A](deriver)
+          import zio.schema.Factory
+          import zio.schema.Factory._
+          def createSomeTrait[A: Factory](deriver: Deriver[TC])(implicit schema: Schema[A]): TC[A] =
+            implicitly[Factory[A]].derive[TC](deriver)
 
-          val tc = factory[Enum1](deriver)
+          val tc = createSomeTrait[Enum1](deriver)
           assertTrue(tc.isDerived == true)
-        }
+        },
       ),
       versionSpecificSuite
     )
