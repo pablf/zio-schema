@@ -211,6 +211,8 @@ import zio.{ Chunk, Scope }
           def createSomeTrait[A: Factory](deriver: Deriver[TC])(implicit schema: Schema[A]): TC[A] =
             implicitly[Factory[A]].derive[TC](deriver)
 
+          implicit val im: Factory[Enum1] = factory[Enum1]
+
           val tc = createSomeTrait[Enum1](deriver)
           assertTrue(tc.isDerived == true)
         },
