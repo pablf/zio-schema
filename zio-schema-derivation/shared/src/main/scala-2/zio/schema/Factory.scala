@@ -27,12 +27,14 @@ object Factory {
     reify {
       new Factory[A] {
         def derive[F[_]](deriver: Deriver[F])(implicit schema: Schema[A]): F[A] =
-            c.Expr[F[A]](
-                Derive.deriveImpl(c)(
-                    c.Expr[Deriver[F]](Ident(newTermName("deriver")))
+            c.Expr[F[A]](q"""
+                Derive.deriveImpl($c)(
+                    deriver
                 )(
-                    c.Expr[Schema[A]](Ident(newTermName("schema")))
+                    schema
                 )
+            """
+                
             ).value
             
       }
