@@ -33,7 +33,7 @@ object Factory {
                 )(
                     c.Expr[Schema[A]](Ident(newTermName("schema")))
                 )
-            ).splice
+            ).eval
             
       }
     }
