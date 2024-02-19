@@ -24,18 +24,12 @@ object Factory {
   ): c.Expr[Factory[A]] = {
     import c.universe._
 
-    reify {
-      new Factory[A] {
-        def derive[F[_]](deriver: Deriver[F])(implicit schema: Schema[A]): F[A] =
-            c.Expr[F[A]](
-                Derive.deriveImpl(c)(
-                    c.Expr[Deriver[F]](Ident(newTermName("deriver")))
-                )(
-                    c.Expr[Schema[A]](Ident(newTermName("schema")))
-                )
-            ).splice
-            
-      }
-    }
+    q"""
+        new Factory[A] {
+            override def derive[F[_]](deriver: Deriver[F])(implicit schema: Schema[A]): F[A] = Derive.derive[F, A](deriver)
+                
+        }
+    
+    """
   }
 }
