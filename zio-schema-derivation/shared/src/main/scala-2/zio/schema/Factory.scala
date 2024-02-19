@@ -21,12 +21,12 @@ object Factory {
 
   def factoryImpl[A: c.WeakTypeTag](
     c: whitebox.Context
-  )(schema: c.Expr[Schema[A]]): c.Tree = {
+  ): c.Tree = {
     import c.universe._
 
     reify {
       new Factory[A] {
-        def derive[F[_]](deriver: Deriver[F])(implicit schema: Schema[A]): F[A] = deriveImpl[F, A](c)(deriver)(schema)
+        def derive[F[_]](deriver: Deriver[F])(implicit schema: Schema[A]): F[A] = Derive.deriveImpl[F, A](c)(deriver)(schema)
       }
     }
   }
