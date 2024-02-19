@@ -28,9 +28,9 @@ object Factory {
       new Factory[A] {
         def derive[F[_]](deriver: Deriver[F])(implicit schema: Schema[A]): F[A] =
             Derive.deriveImpl(c)(
-                    c.Expr[Deriver[F]](Ident(newTermName("deriver"))).splice
+                    c.Expr[Deriver[F]](Ident(newTermName("deriver")))
                 )(
-                    c.Expr[Schema[A]](Ident(newTermName("schema"))).splice  
+                    c.Expr[Schema[A]](Ident(newTermName("schema")))
                 )
       }
     }
