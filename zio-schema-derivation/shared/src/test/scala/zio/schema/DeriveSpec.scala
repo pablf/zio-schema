@@ -215,7 +215,7 @@ import zio.{ Chunk, Scope }
 
           val tc = createSomeTrait[Enum1](deriver)
           assertTrue(tc.isDerived == true)
-        },
+        }
       ),
       versionSpecificSuite
     )

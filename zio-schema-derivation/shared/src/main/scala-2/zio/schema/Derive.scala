@@ -373,7 +373,7 @@ object Derive {
       }
 
     recurse(weakTypeOf[A], schema.tree, List.empty[Frame[c.type]], top = true)
-    
+
   }
 
   final case class Frame[C <: whitebox.Context](ctx: C, ref: String, tpe: C#Type)

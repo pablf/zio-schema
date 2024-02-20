@@ -4,13 +4,13 @@ import scala.language.experimental.macros
 import scala.reflect.macros.whitebox
 
 /**
-   * Useful to create factory methods.
-   * 
-   * import Factory._
-   * def createSomeTrait[A: Factory](deriver: Deriver[SomeTrait])(implicit schema: Schema[A]): SomeTrait[A] = 
-   *    implicitly[Factory[A]].derive[SomeTrait](deriver)
-   * 
-   */
+ * Useful to create factory methods.
+ *
+ * import Factory._
+ * def createSomeTrait[A: Factory](deriver: Deriver[SomeTrait])(implicit schema: Schema[A]): SomeTrait[A] =
+ *    implicitly[Factory[A]].derive[SomeTrait](deriver)
+ *
+ */
 trait Factory[A] {
   def derive[F[_]](deriver: Deriver[F])(implicit schema: Schema[A]): F[A]
 }
