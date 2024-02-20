@@ -19,14 +19,16 @@ object Factory {
 
   implicit def factory[A]: Factory[A] = macro factoryImpl[A]
 
-  def factoryImpl[A](
+  def factoryImpl[A: WeakTypeTag](
     c: whitebox.Context
   ): c.Tree = {
     import c.universe._
 
+    val tpeA = weakTypeOf[A]
+
     q"""
-        new Factory[A] {
-            override def derive[F[_]](deriver: Deriver[F])(implicit schema: Schema[A]): F[A] = Derive.derive[F, A](deriver)
+        new Factory[$tpeA] {
+            override def derive[F[_]](deriver: Deriver[F])(implicit schema: Schema[$tpeA]): F[$tpeA] = Derive.derive[F, $tpeA](deriver)
                 
         }
     
