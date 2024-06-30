@@ -378,7 +378,7 @@ object JsonCodec {
 
     private def enumEncoder[Z](schema: Schema.Enum[Z], cfg: Config, cases: Schema.Case[Z, _]*): ZJsonEncoder[Z] =
       // if all cases are CaseClass0, encode as a String
-      if (schema.annotations.exists(_.isInstanceOf[simpleEnum])) {
+      if (schema.annotations.exists(_.isInstanceOf[simpleEnum]) && cases.forall(_.schema.isInstanceOf[Schema.CaseClass0[_]])) {
         val caseMap: Map[Z, String] =
           schema.nonTransientCases
             .map(

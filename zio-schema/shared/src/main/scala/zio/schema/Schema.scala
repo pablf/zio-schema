@@ -357,6 +357,8 @@ object Schema extends SchemaPlatformSpecific with SchemaEquality {
 
     def id: TypeId
 
+    def generics: List[String] = Nil
+
     def cases: Chunk[Case[Z, _]]
 
     def caseOf(id: String): Option[Case[Z, _]] =
@@ -444,6 +446,8 @@ object Schema extends SchemaPlatformSpecific with SchemaEquality {
     def deconstruct(value: R)(implicit unsafe: Unsafe): Chunk[Option[Any]]
 
     def id: TypeId
+
+    def generics: ListMap[String, Option[List[String]]] = ListMap.empty
 
     def defaultValue: scala.util.Either[String, R] =
       Unsafe.unsafe { implicit unsafe =>
