@@ -260,6 +260,10 @@ object DeriveSchemaSpec extends ZIOSpecDefault with VersionSpecificDeriveSchemaS
   sealed trait SimpleEnum2
   case class SimpleClass2() extends SimpleEnum2
 
+  sealed trait NonSimpleTrait
+  sealed trait NonSimpleMiddle extends NonSimpleTrait
+  case class NonSimpleLeaf() extends NonSimpleMiddle
+
   sealed abstract class AbstractBaseClass(val x: Int)
   final case class ConcreteClass1(override val x: Int, y: Int)    extends AbstractBaseClass(x)
   final case class ConcreteClass2(override val x: Int, s: String) extends AbstractBaseClass(x)
@@ -492,6 +496,10 @@ object DeriveSchemaSpec extends ZIOSpecDefault with VersionSpecificDeriveSchemaS
       test("correctly derives simpleEnum without annotation") {
         val derived = DeriveSchema.gen[SimpleEnum2]
         assertTrue(derived.annotations == Chunk(simpleEnum(true)))
+      },
+      test("doesn't derives simpleEnum when extending subclasses") {
+        val derived = DeriveSchema.gen[NonSimpleTrait]
+        assertTrue(derived.annotations.isEmpty)
       },
       test("correctly derives schema for abstract sealed class with case class subclasses") {
         val derived = DeriveSchema.gen[AbstractBaseClass]
