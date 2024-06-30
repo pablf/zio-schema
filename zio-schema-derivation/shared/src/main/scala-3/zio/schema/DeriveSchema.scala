@@ -363,7 +363,7 @@ private case class DeriveSchema()(using val ctx: Quotes) {
     val children = TypeRepr.of[T].typeSymbol.children
     val childrenFields = children.map(_.declaredFields.length)
     val childrenFieldsConstructor = children.map(_.caseFields.length)
-    val isSimpleEnum: Boolean = childrenFieldsConstructor.forall( _ == 0) && childrenFields.forall( _ <= numParentFields) && types.flatMap(_.children).isEmpty
+    val isSimpleEnum: Boolean = childrenFieldsConstructor.forall( _ == 0) && childrenFields.forall( _ <= numParentFields) && types.flatmap(_.typeSymbol.children).isEmpty
     val hasSimpleEnumAnn: Boolean = TypeRepr.of[T].typeSymbol.hasAnnotation(TypeRepr.of[_root_.zio.schema.annotation.simpleEnum].typeSymbol)
 
     val docAnnotationExpr = TypeRepr.of[T].typeSymbol.docstring.map { docstring =>

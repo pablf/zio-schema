@@ -65,6 +65,10 @@ trait VersionSpecificDeriveSchemaSpec extends ZIOSpecDefault {
     case A extends NonSimpleEnum5(0, "")
     case B(n: Int) extends NonSimpleEnum5(n, "")
 
+  sealed trait NonSimpleTrait
+  sealed trait NonSimpleMiddle extends NonSimpleTrait
+  case class NonSimpleLeaf()   extends NonSimpleMiddle
+
   def versionSpecificSuite = Spec.labeled(
     "Scala 3 specific tests",
     suite("Derivation")(
@@ -97,6 +101,10 @@ trait VersionSpecificDeriveSchemaSpec extends ZIOSpecDefault {
         assertTrue(derived4.annotations.isEmpty) &&
         assertTrue(derived5.annotations.isEmpty)
       },
+      test("doesn't assigns simpleEnum to enum with intermediate trait") {
+        val derived = DeriveSchema.gen[NonSimpleTrait]
+        assertTrue(derived.annotations.isEmpty)
+      }
       test("derive different annotations for parent and child in enum") {
         val parent = DeriveSchema.gen[ColourAnnotations]
         val child = parent match {
