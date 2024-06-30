@@ -262,7 +262,7 @@ object DeriveSchemaSpec extends ZIOSpecDefault with VersionSpecificDeriveSchemaS
 
   sealed trait NonSimpleTrait
   sealed trait NonSimpleMiddle extends NonSimpleTrait
-  case class NonSimpleLeaf() extends NonSimpleMiddle
+  case class NonSimpleLeaf()   extends NonSimpleMiddle
 
   sealed abstract class AbstractBaseClass(val x: Int)
   final case class ConcreteClass1(override val x: Int, y: Int)    extends AbstractBaseClass(x)

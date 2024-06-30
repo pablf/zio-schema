@@ -379,7 +379,8 @@ object JsonCodec {
     private def enumEncoder[Z](schema: Schema.Enum[Z], cfg: Config, cases: Schema.Case[Z, _]*): ZJsonEncoder[Z] =
       // if all cases are CaseClass0, encode as a String
       if (schema.annotations.exists(_.isInstanceOf[simpleEnum])) {
-        if (!cases.forall(_.schema.isInstanceOf[Schema.CaseClass0[_]])) throw new Throwable("@simpleEnum annotation should not be added to non-simple enumerations")
+        if (!cases.forall(_.schema.isInstanceOf[Schema.CaseClass0[_]]))
+          throw new Throwable("@simpleEnum annotation should not be added to non-simple enumerations")
         val caseMap: Map[Z, String] =
           schema.nonTransientCases
             .map(
@@ -701,7 +702,8 @@ object JsonCodec {
 
       // if all cases are CaseClass0, decode as String
       if (schema.annotations.exists(_.isInstanceOf[simpleEnum])) {
-        if (!cases.forall(_.schema.isInstanceOf[Schema.CaseClass0[_]])) throw new Throwable("@simpleEnum annotation should not be added to non-simple enumerations")
+        if (!cases.forall(_.schema.isInstanceOf[Schema.CaseClass0[_]]))
+          throw new Throwable("@simpleEnum annotation should not be added to non-simple enumerations")
         val caseMap: Map[String, Z] =
           cases.map(case_ => case_.id -> case_.schema.asInstanceOf[Schema.CaseClass0[Z]].defaultConstruct()).toMap
         ZJsonDecoder.string.mapOrFail(

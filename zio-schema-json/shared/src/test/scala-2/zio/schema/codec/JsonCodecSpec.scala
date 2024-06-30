@@ -1769,8 +1769,9 @@ object JsonCodecSpec extends ZIOSpecDefault {
   sealed trait NonSimpleEnum
 
   object NonSimpleEnum {
-    case class Leaf(a: Int)         extends NonSimpleEnum
-    implicit val schema: zio.schema.Schema[NonSimpleEnum] = zio.schema.DeriveSchema.gen[NonSimpleEnum].annotate(simpleEnum())
+    case class Leaf(a: Int) extends NonSimpleEnum
+    implicit val schema: zio.schema.Schema[NonSimpleEnum] =
+      zio.schema.DeriveSchema.gen[NonSimpleEnum].annotate(simpleEnum())
   }
 
   sealed trait Color

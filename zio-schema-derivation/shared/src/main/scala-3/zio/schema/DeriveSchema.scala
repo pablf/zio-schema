@@ -360,6 +360,7 @@ private case class DeriveSchema()(using val ctx: Quotes) {
     val cases = typesAndLabels.map { case (tpe, label) => deriveCase[T](tpe, label, newStack) }
 
     val numParentFields: Int = TypeRepr.of[T].typeSymbol.declaredFields.length
+    val children = TypeRepr.of[T].typeSymbol.children
     val childrenFields = children.map(_.declaredFields.length)
     val childrenFieldsConstructor = children.map(_.caseFields.length)
     val isSimpleEnum: Boolean = childrenFieldsConstructor.forall( _ == 0) && childrenFields.forall( _ <= numParentFields) && types.flatMap(_.children).isEmpty
