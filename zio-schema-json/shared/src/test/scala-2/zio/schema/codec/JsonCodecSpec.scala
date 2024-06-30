@@ -1756,12 +1756,12 @@ object JsonCodecSpec extends ZIOSpecDefault {
   }
 
   sealed trait IntermediateEnum
+
   object IntermediateEnum {
     sealed trait IntermediateElem extends IntermediateEnum
-    case object FinalElem extends IntermediateEnum
+    case object FinalElem         extends IntermediateEnum
     implicit val schema: zio.schema.Schema[IntermediateEnum] = zio.schema.DeriveSchema.gen[IntermediateEnum]
   }
-    
 
   sealed trait Color
 
