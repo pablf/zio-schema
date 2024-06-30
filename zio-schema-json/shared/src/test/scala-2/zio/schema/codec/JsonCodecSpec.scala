@@ -296,7 +296,7 @@ object JsonCodecSpec extends ZIOSpecDefault {
         assertEncodes(
           Schema[IntermediateEnum],
           IntermediateEnum.FinalElem,
-          charSequenceToByteChunk("""FinalElem""")
+          charSequenceToByteChunk(""""FinalElem"""")
         )
       },
       test("case class") {
