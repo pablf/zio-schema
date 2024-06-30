@@ -701,7 +701,7 @@ object JsonCodec {
       }.toMap
 
       // if all cases are CaseClass0, decode as String
-      if (schema.annotations.exists(_.isInstanceOf[simpleEnum]) && cases.forall(
+      if (parentSchema.annotations.exists(_.isInstanceOf[simpleEnum]) && cases.forall(
             _.schema.isInstanceOf[Schema.CaseClass0[_]]
           )) {
         val caseMap: Map[String, Z] =
