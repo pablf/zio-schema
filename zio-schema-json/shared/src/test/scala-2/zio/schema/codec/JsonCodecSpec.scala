@@ -299,6 +299,9 @@ object JsonCodecSpec extends ZIOSpecDefault {
           charSequenceToByteChunk(""""FinalElem"""")
         )
       },
+      test("fails when adding manually @simpleEnum to non-simple enumerations") {
+        assertZIO(ZIO.attempt(JsonCodec.schemaBasedBinaryCodec(cfg)(schema)).either)(isLeft(anything))
+      },
       test("case class") {
         assertEncodes(
           searchRequestWithTransientFieldSchema,
@@ -1763,7 +1766,12 @@ object JsonCodecSpec extends ZIOSpecDefault {
     implicit val schema: zio.schema.Schema[IntermediateEnum] = zio.schema.DeriveSchema.gen[IntermediateEnum]
   }
 
+  sealed trait NonSimpleEnum
 
+  object NonSimpleEnum {
+    case class Leaf(a: Int)         extends NonSimpleEnum
+    implicit val schema: zio.schema.Schema[NonSimpleEnum] = zio.schema.DeriveSchema.gen[NonSimpleEnum].annotate(simpleEnum())
+  }
 
   sealed trait Color
 
