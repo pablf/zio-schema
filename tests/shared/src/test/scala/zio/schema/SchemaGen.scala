@@ -176,7 +176,7 @@ object SchemaGen {
 
   val anySequenceAndGen: Gen[Sized, SequenceAndGen[_]] =
     anyPrimitiveAndGen.map {
-      case (schema, gen) =>
+      case (schema: Schema[_], gen) =>
         Schema.chunk(schema) -> Gen.chunkOf(gen)
     }
 
@@ -335,7 +335,7 @@ object SchemaGen {
 
   val anySequenceTransformAndGen: Gen[Sized, SequenceTransformAndGen[_]] =
     anyPrimitiveAndGen.map {
-      case (schema, gen) =>
+      case (schema: Schema[Any], gen) =>
         transformSequence(Schema.chunk(schema)) -> Gen.listOf(gen)
     }
 
