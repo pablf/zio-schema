@@ -95,7 +95,7 @@ object DynamicValueGen {
   def anyDynamicRightValueOfSchema[A](schema: Schema[A]): Gen[Sized, DynamicValue.RightValue] =
     anyDynamicValueOfSchema(schema).map(DynamicValue.RightValue(_))
 
-  def anyDynamicBothValueOfSchema[A, B](left: Schema[A], right: Schema[A]): Gen[Sized, DynamicValue.BothValue] =
+  def anyDynamicBothValueOfSchema[A, B](left: Schema[A], right: Schema[B]): Gen[Sized, DynamicValue.BothValue] =
     anyDynamicValueOfSchema(left).zip(anyDynamicValueOfSchema(right)).map {
       case (l, r) => DynamicValue.BothValue(l, r)
     }
