@@ -8,7 +8,7 @@ env:
 on:
   pull_request:
   push:
-    branches: ['main']
+    branches: ['spp']
   release:
     types:
       - published
