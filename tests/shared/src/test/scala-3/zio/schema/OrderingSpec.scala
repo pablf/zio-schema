@@ -17,17 +17,17 @@ object OrderingSpec extends ZIOSpecDefault {
       suite("laws")(
         test("reflexivity") {
           check(anySchemaAndValue) {
-            case (schema: Schema[?], a) => assert(schema.ordering.compare(a, a))(equalTo(0))
+            case (schema, a): SchemaAndValue[?] => assert(schema.ordering.compare(a, a))(equalTo(0))
           }
         },
         test("antisymmetry") {
           check(genAnyOrderedPair) {
-            case (schema: Schema[?], x, y) => assert(schema.ordering.compare(y, x))(isGreaterThan(0))
+            case (schema, x, y): SchemaAndPair[?] => assert(schema.ordering.compare(y, x))(isGreaterThan(0))
           }
         },
         test("transitivity") {
           check(genAnyOrderedTriplet) {
-            case (schema: Schema[?], x, _, z) => assert(schema.ordering.compare(x, z))(isLessThan(0))
+            case (schema, x, _, z): SchemaAndTriplet[?] => assert(schema.ordering.compare(x, z))(isLessThan(0))
           }
         }
       )
@@ -68,7 +68,7 @@ object OrderingSpec extends ZIOSpecDefault {
 
   def structureOrderingTest(t: StructureTestCase): Spec[TestConfig with Sized, Nothing] =
     test(t.name)(check(t.increasingPairGen)(_ match {
-      case (schema: Schema[?], l, r) =>
+      case (schema, l, r): SchemaAndPair[?] =>
         assert(schema.ordering.compare(l, r))(isLessThan(0))
     }))
 
