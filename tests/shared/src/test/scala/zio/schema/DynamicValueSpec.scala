@@ -25,48 +25,48 @@ object DynamicValueSpec extends ZIOSpecDefault {
         },
         test("round-trips Eithers") {
           check(SchemaGen.anyEitherAndValue) {
-            case (schema, a) => assert(schema.fromDynamic(schema.toDynamic(a)))(isRight(equalTo(a)))
+            case (schema: Schema[Either[_, _]], a) => assert(schema.fromDynamic(schema.toDynamic(a)))(isRight(equalTo(a)))
           }
         },
         test("round-trips Tuples") {
           check(SchemaGen.anyTupleAndValue) {
-            case (schema, a) => assert(schema.fromDynamic(schema.toDynamic(a)))(isRight(equalTo(a)))
+            case (schema: Schema[(_, _)], a) => assert(schema.fromDynamic(schema.toDynamic(a)))(isRight(equalTo(a)))
           }
         },
         test("round-trips Optionals") {
           check(SchemaGen.anyOptionalAndValue) {
-            case (schema, a) => assert(schema.fromDynamic(schema.toDynamic(a)))(isRight(equalTo(a)))
+            case (schema: Schema[Option[_]], a) => assert(schema.fromDynamic(schema.toDynamic(a)))(isRight(equalTo(a)))
           }
         },
         test("round-trips Transform") {
           check(SchemaGen.anyTransformAndValue) {
-            case (schema, a) => assert(schema.fromDynamic(schema.toDynamic(a)))(isRight(equalTo(a)))
+            case (schema: Schema[_], a) => assert(schema.fromDynamic(schema.toDynamic(a)))(isRight(equalTo(a)))
           }
         },
         test("round-trips CaseClass") {
           check(SchemaGen.anyCaseClassAndValue) {
-            case (schema, a) => assert(schema.fromDynamic(schema.toDynamic(a)))(isRight(equalTo(a)))
+            case (schema: Schema[_], a) => assert(schema.fromDynamic(schema.toDynamic(a)))(isRight(equalTo(a)))
           }
         },
         test("round-trips Enum") {
           check(SchemaGen.anyEnumAndValue) {
-            case (schema, a) => assert(schema.fromDynamic(schema.toDynamic(a)))(isRight(equalTo(a)))
+            case (schema: Schema[_], a) => assert(schema.fromDynamic(schema.toDynamic(a)))(isRight(equalTo(a)))
           }
         },
         test("round-trips any un-nested schema") {
           check(SchemaGen.anyLeafAndValue) {
-            case (schema, a) => assert(schema.fromDynamic(schema.toDynamic(a)))(isRight(equalTo(a)))
+            case (schema: Schema[_], a) => assert(schema.fromDynamic(schema.toDynamic(a)))(isRight(equalTo(a)))
           }
         },
         test("round-trips any nested schema") {
           check(SchemaGen.anyTree(1).flatMap(s => DynamicValueGen.anyDynamicValueOfSchema(s).map(s -> _))) {
             case (schema, dynamic) =>
-              assert(schema.fromDynamic(dynamic))(isRight)
+              assert(schema.asInstanceOf[Schema[_]].fromDynamic(dynamic))(isRight)
           }
         },
         test("round-trips recursive data types") {
           check(SchemaGen.anyRecursiveTypeAndValue) {
-            case (schema, a) =>
+            case (schema: Schema[_], a) =>
               assert(schema.fromDynamic(schema.toDynamic(a)))(isRight(equalTo(a)))
           }
         },
@@ -77,12 +77,12 @@ object DynamicValueSpec extends ZIOSpecDefault {
         },
         test("round-trips set") {
           check(SchemaGen.anySetAndValue) {
-            case (schema, a) => assert(schema.fromDynamic(schema.toDynamic(a)))(isRight(equalTo(a)))
+            case (schema: Schema[_], a) => assert(schema.fromDynamic(schema.toDynamic(a)))(isRight(equalTo(a)))
           }
         },
         test("round-trips map") {
           check(SchemaGen.anyMapAndValue) {
-            case (schema, a) => assert(schema.fromDynamic(schema.toDynamic(a)))(isRight(equalTo(a)))
+            case (schema: Schema[Map[_, _]], a) => assert(schema.fromDynamic(schema.toDynamic(a)))(isRight(equalTo(a)))
           }
         }
       ),
